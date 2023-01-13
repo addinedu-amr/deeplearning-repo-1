@@ -35,6 +35,7 @@
 
 
 ## 엑티브 다이어그램 (유저 - 앱)
+#### 수정
 ![엑티브 다이어그램(초기)](https://user-images.githubusercontent.com/110883172/212270734-4f4a9438-d2fd-4379-baee-bf25414a6306.png)
 
 ![엑티브 다이어 그램 운동중](https://user-images.githubusercontent.com/110883172/212270755-ddb07fd3-c210-423f-8c99-954b01fc2d31.png)
