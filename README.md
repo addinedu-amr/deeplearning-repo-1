@@ -14,11 +14,12 @@
 
 #### 김두엽
 - 프로젝트 설계 (시간분배, 일정)
-- 프로젝트 기록
+- 프로젝트 기록 및 설계도 작성
 - media pipe 
 
 #### 박민제
-- 프로젝트 설계 (사용할 프로그램 결정 및 조사 및 팀원 어드바이스)
+- 프로젝트 설계 및 구체화 
+- 팀원 어드바이스
 - media pipe
 - 운동의 정확한 자세 정의 및 측정 
 
@@ -36,7 +37,8 @@
 
 ## 설계
 ### 앱 UI 설계
-![딥러닝 프로젝트 UI 설계 drawio](https://user-images.githubusercontent.com/110883172/212524196-0cb88625-d4df-4c4e-b944-99a20cf80b89.png)
+![딥러닝 프로젝트 UI 설계 drawio (2)](https://user-images.githubusercontent.com/110883172/212559353-b19d15be-90f5-467c-a2ae-cbf922123681.png)
+
 
 
 
