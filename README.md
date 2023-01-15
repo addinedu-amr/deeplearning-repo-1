@@ -42,7 +42,7 @@
 
 
 
-### 엑티브 다이어그램 설계!
-[딥러닝 엑티브 다이어그램 drawio](https://user-images.githubusercontent.com/110883172/212559546-9d42e14d-5394-4ba5-a2a6-b6b02df9cad2.png)
+### 엑티브 다이어그램 설계
+![딥러닝 엑티브 다이어그램 drawio](https://user-images.githubusercontent.com/110883172/212559555-71f28e04-6fc5-4066-8a03-3cdb1f24c598.png)
 
 
