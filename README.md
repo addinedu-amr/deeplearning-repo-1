@@ -34,8 +34,15 @@
 - nltk
 
 
-## 엑티브 다이어그램 (유저 - 앱)
-#### 수정
+## 설계
+### 앱 UI 설계
+![딥러닝 프로젝트 UI 설계 drawio](https://user-images.githubusercontent.com/110883172/212524196-0cb88625-d4df-4c4e-b944-99a20cf80b89.png)
+
+
+
+#### 수정해야합니다.
+
+
 ![엑티브 다이어그램(초기)](https://user-images.githubusercontent.com/110883172/212270734-4f4a9438-d2fd-4379-baee-bf25414a6306.png)
 
 ![엑티브 다이어 그램 운동중](https://user-images.githubusercontent.com/110883172/212270755-ddb07fd3-c210-423f-8c99-954b01fc2d31.png)
