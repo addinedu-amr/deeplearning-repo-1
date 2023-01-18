@@ -1,4 +1,5 @@
-#  운동을 도와주는 뭐시기 (제목)
+#  까꿍 PT
+![image](https://user-images.githubusercontent.com/110883172/213055379-b0ee5d67-a418-4456-8e60-57412390a25a.png)
 
 
 ## 개요 
@@ -52,7 +53,7 @@
 
 
 
-## 구체화
+## 구현
 ### pose estimation
 <center><img src="https://user-images.githubusercontent.com/110883172/213050490-fe6abc68-d3f8-423b-a4b7-73957f0c30f3.png" width="400" height="400"/></center>
 - mediapipe를 사용하여, 각 관절의 좌표값을 읽어들임
@@ -65,4 +66,19 @@
 <center><img src="https://user-images.githubusercontent.com/110883172/213050058-c4b89369-5a06-4d10-b916-99b8ea3b83dd.png" width="400" height="700"/></center>
 - 180도 방향 모션 캡처 (준비자세, 스쿼트자세, 틀린자세)
 
+
+### 자연어처리
+
+
+
+
+### APP (초안)
+- 메인화면
+![image](https://user-images.githubusercontent.com/110883172/213055508-68308d52-acf1-4ed7-b485-2616b79bcb7c.png)
+
+- 회원가입
+![image](https://user-images.githubusercontent.com/110883172/213055544-844fd3b2-0cd5-4ebb-af68-91f2b15e9d69.png)
+
+- 운동기록
+![image](https://user-images.githubusercontent.com/110883172/213055607-efb77b1e-9908-435b-998f-14781bc1ed89.png)
 
