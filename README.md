@@ -54,7 +54,7 @@
 
 ## 구체화
 ### pose estimation
-![image](https://user-images.githubusercontent.com/110883172/213050490-fe6abc68-d3f8-423b-a4b7-73957f0c30f3.png)
+<center><img src="https://user-images.githubusercontent.com/110883172/213050490-fe6abc68-d3f8-423b-a4b7-73957f0c30f3.png" width="600" height="600"/></center>
 - mediapipe를 사용하여, 각 관절의 좌표값을 읽어들임
 
 #### 구현하고자 하는 운동 종류
@@ -62,7 +62,7 @@
 - 팔굽혀펴기 (예정)
 
 #### 데이터 출처
-![image](https://user-images.githubusercontent.com/110883172/213050058-c4b89369-5a06-4d10-b916-99b8ea3b83dd.png)
+<center><img src="https://user-images.githubusercontent.com/110883172/213050058-c4b89369-5a06-4d10-b916-99b8ea3b83dd.png" width="600" height="400"/></center>
 - 180도 방향 모션 캡처 (준비자세, 스쿼트자세, 틀린자세)
 
 
