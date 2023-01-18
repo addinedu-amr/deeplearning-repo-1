@@ -75,11 +75,14 @@
 
 ### ◾ APP (초안)
 - 메인화면
+
 ![image](https://user-images.githubusercontent.com/110883172/213055508-68308d52-acf1-4ed7-b485-2616b79bcb7c.png)
 
 - 회원가입
+
 ![image](https://user-images.githubusercontent.com/110883172/213055544-844fd3b2-0cd5-4ebb-af68-91f2b15e9d69.png)
 
 - 운동기록
+
 ![image](https://user-images.githubusercontent.com/110883172/213055607-efb77b1e-9908-435b-998f-14781bc1ed89.png)
 
