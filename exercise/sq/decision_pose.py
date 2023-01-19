@@ -8,25 +8,41 @@ from sklearn.metrics import accuracy_score
 from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
 from playsound import playsound
+import threading
+import time
+from queue import Queue
 
 # 스쿼트 판단용 코드
 
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_pose = mp.solutions.pose
 
-# 자세측정 지연시간?
-time_count = 0
 
-# 운동 카운트
-ex_count = 0
+def play_sound(q):
+  while True:
+    data = q.get()
+    if data is None:
+      break
+    data = str(data)
+    if len(data) == 1:
+      if data == "0":
+        playsound("./pp.mp3")
+        
+      elif data[-1] > "0":
+        playsound("./sound/" + str(data) + ".mp3" )
+  
+    if len(data) == 2:
+      if data[-1] == "0":
+        if data[0] == "1":
+          playsound("./sound/10.mp3")
+        
+        elif data[0] > "1":
+          playsound("./sound/" + data[0] + ".mp3" ) 
+          playsound("./sound/10.mp3")
+         
+      elif data[-1] > "0":
+        playsound("./sound/" + data[-1] + ".mp3" )
+      
 
-# 운동 상태
-ex_status = 0
 
-status = "start"
-
-loaded_model = pickle.load(open('./val_model.sav', 'rb'))    
 
 def calculate_angle(a,b,c):
     a = np.array(a) # First
@@ -41,113 +57,142 @@ def calculate_angle(a,b,c):
         
     return angle
 
-cap = cv2.VideoCapture(0)
-with mp_pose.Pose(
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as pose:
-  while cap.isOpened():
-    success, image = cap.read()
-    if not success:
-      print("Ignoring empty camera frame.")
-      # If loading a video, use 'break' instead of 'continue'.
-      continue
+def play_cam(q):
 
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
-    image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = pose.process(image)
+  mp_drawing = mp.solutions.drawing_utils
+  mp_drawing_styles = mp.solutions.drawing_styles
+  mp_pose = mp.solutions.pose
 
-    # Draw the pose annotation on the image.
-    image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+  # 자세측정 지연시간?
+  time_count = 0
 
-    mp_drawing.draw_landmarks(
-        image,
-        results.pose_landmarks,
-        mp_pose.POSE_CONNECTIONS,
-        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    # Flip the image horizontally for a selfie-view display.11
+  # 운동 카운트
+  ex_count = 10
 
-    # 렌드마크가0~32 를 가진다.
-   
-    try:
-      landmarks = results.pose_landmarks.landmark
-      Rshoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-      Rhip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
-      Rknee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-      Rankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-      
-      Lshoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-      Lhip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
-      Lknee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
-      Lankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+  # 운동 상태
+  ex_status = 0
 
-      Rangle_knee = calculate_angle(Rhip, Rknee, Rankle)
-      Rknee_angle = 180-Rangle_knee
+  status = "start"
 
-      Langle_knee = calculate_angle(Lhip, Lknee, Lankle)
-      Lknee_angle = 180-Langle_knee
+  loaded_model = pickle.load(open('./val_model.sav', 'rb')) 
 
-      Rangle_hip = calculate_angle(Rshoulder, Rhip, Rknee)
-      Rhip_angle = 180-Rangle_hip
+  cap = cv2.VideoCapture(0)
+  with mp_pose.Pose(
+      min_detection_confidence=0.5,
+      min_tracking_confidence=0.5) as pose:
+    while cap.isOpened():
+      success, image = cap.read()
+      if not success:
+        print("Ignoring empty camera frame.")
+        # If loading a video, use 'break' instead of 'continue'.
+        continue
 
-      Langle_hip = calculate_angle(Lshoulder, Lhip, Lknee)
-      Lhip_angle = 180-Langle_hip
+      # To improve performance, optionally mark the image as not writeable to
+      # pass by reference.
+      image.flags.writeable = False
+      image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+      results = pose.process(image)
 
-    except:
-      pass
+      # Draw the pose annotation on the image.
+      image.flags.writeable = True
+      image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    try:
-      if time_count > 10:
-        time_count = 0
-        pre = np.array([[Rshoulder[0], Rshoulder[1], Lshoulder[0], Lshoulder[1],
-                           Rhip[0], Rhip[1], Lhip[0], Lhip[1], 
-                           Rknee[0], Rknee[1], Lknee[0], Lknee[1], 
-                           Rankle[0], Rankle[1], Lankle[0], Lankle[1], 
-                           Rknee_angle, Lknee_angle, Rhip_angle, Lhip_angle
-                          ]])
+      mp_drawing.draw_landmarks(
+          image,
+          results.pose_landmarks,
+          mp_pose.POSE_CONNECTIONS,
+          landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+      # Flip the image horizontally for a selfie-view display.11
+
+      # 렌드마크가0~32 를 가진다.
+    
+      try:
+        landmarks = results.pose_landmarks.landmark
+        Rshoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+        Rhip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+        Rknee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+        Rankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
         
+        Lshoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+        Lhip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+        Lknee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
+        Lankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
 
-        #print(np.argmax(loaded_model.predict_proba(pre).tolist()))
-        if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
-          if ex_status == 0:
-            ex_status = 1
-            status = "ready"
-            playsound("./pp.mp3")
+        Rangle_knee = calculate_angle(Rhip, Rknee, Rankle)
+        Rknee_angle = 180-Rangle_knee
 
-          elif ex_status == 2:
-            ex_status = 1
-            status = "ready"
-            ex_count += 1
-            playsound("./pp.mp3")
+        Langle_knee = calculate_angle(Lhip, Lknee, Lankle)
+        Lknee_angle = 180-Langle_knee
 
-        elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
-          if ex_status == 1:
-            ex_status = 2
-            status = "squat"
-            playsound("./pp.mp3")
-           
-    except:
-      print("model error")
-        
-        
+        Rangle_hip = calculate_angle(Rshoulder, Rhip, Rknee)
+        Rhip_angle = 180-Rangle_hip
+
+        Langle_hip = calculate_angle(Lshoulder, Lhip, Lknee)
+        Lhip_angle = 180-Langle_hip
+
+      except:
+        pass
+
+      try:
+        if time_count > 10:
+          time_count = 0
+          pre = np.array([[Rshoulder[0], Rshoulder[1], Lshoulder[0], Lshoulder[1],
+                            Rhip[0], Rhip[1], Lhip[0], Lhip[1], 
+                            Rknee[0], Rknee[1], Lknee[0], Lknee[1], 
+                            Rankle[0], Rankle[1], Lankle[0], Lankle[1], 
+                            Rknee_angle, Lknee_angle, Rhip_angle, Lhip_angle
+                            ]])
+          
+
+          #print(np.argmax(loaded_model.predict_proba(pre).tolist()))
+          if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
+            if ex_status == 0:
+              ex_status = 1
+              status = "ready"
+              q.put(0)
+
+            elif ex_status == 2:
+              ex_status = 1
+              status = "ready"
+              ex_count += 1
+              q.put(ex_count)
+
+          elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
+            if ex_status == 1:
+              ex_status = 2
+              status = "squat"
+              q.put(0)
+            
+      except:
+        print("model error")
+          
+          
 
 
-    cv2.flip(image, 1)
-    cv2.putText(image, str(ex_count), org=(30, 60), 
-        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
-        color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+      cv2.flip(image, 1)
+      cv2.putText(image, str(ex_count), org=(30, 60), 
+          fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
+          color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
 
-    cv2.putText(image, status, org=(30, 30), 
-        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
-        color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+      cv2.putText(image, status, org=(30, 30), 
+          fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
+          color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
 
-    cv2.imshow('MediaPipe Pose',image)
-    time_count += 1
+      cv2.imshow('MediaPipe Pose',image)
+      time_count += 1
 
 
-    if cv2.waitKey(5) & 0xFF == 27:
-      break
+      if cv2.waitKey(5) & 0xFF == 27:
+        break
 
-cap.release()
+  cap.release()
+  q.put(None)
+
+
+
+if __name__ == '__main__':
+  q = Queue()
+  t1 = threading.Thread(target=play_sound, args=(q, ))
+  t2 = threading.Thread(target=play_cam, args=(q, ))
+  t2.start()
+  t1.start()
