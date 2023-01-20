@@ -92,7 +92,7 @@ def cam(q):
 
   # 운동 카운트
   ex_time = 0
-  num = 95
+  num = 0
 
   # 운동 상태
   ex_status = 0 
@@ -187,27 +187,24 @@ def cam(q):
 
           #print(np.argmax(loaded_model.predict_proba(pre).tolist()))
           if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
-            warning = 0
-            warning_count = 0
             if ex_status == 0:
               ex_status = 1
               status = "ready"
               q.put(1)
-              #playsound("./ready.mp3")
+
 
 
             elif ex_status == 2:
               ex_status = 0
               status = "stop"
               q.put(2)
-              #playsound("./stop.mp3")
+
 
           
           elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
             if ex_status == 1:
               ex_status = 2
               status = "start"
-              #playsound("./start.mp3")
               q.put(3)
               num += 1
               
@@ -227,6 +224,7 @@ def cam(q):
 
     
       cv2.flip(image, 1)
+
       cv2.putText(image, str(num), org=(30, 60), 
           fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
           color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
@@ -241,13 +239,14 @@ def cam(q):
 
       if cv2.waitKey(5) & 0xFF == 27:
         q.put(10000)
+        playsound("./finish.mp3")
         break
 
   cap.release()
 
 
 if __name__ == '__main__':
-  #playsound("./sound/start.mp3")
+  playsound("./start_f.mp3")
   q = Queue()
   t1 = threading.Thread(target=cam, args=(q, ))
   t2 = threading.Thread(target=do_something, args=(q, ))
