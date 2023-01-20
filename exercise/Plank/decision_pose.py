@@ -133,21 +133,21 @@ with mp_pose.Pose(
           warning_count = 0
           if ex_status == 0:
             ex_status = 1
-            status = "plank"
-            playsound("./jang.wav")
+            status = "ready"
+            playsound("./ready.mp3")
 
 
           elif ex_status == 2:
             ex_status = 0
-            status = "plank"
-            playsound("./ya.mp3")
+            status = "stop"
+            playsound("./stop.mp3")
 
         
         elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
           if ex_status == 1:
             ex_status = 2
-            status = "warning"
-            playsound("./Gun.mp3")
+            status = "start"
+            playsound("./start.mp3")
             num += 1
             
            
