@@ -183,6 +183,7 @@ def play_cam(q):
 
 
       if cv2.waitKey(5) & 0xFF == 27:
+        playsound("./sound/finish.mp3")
         break
 
   cap.release()
@@ -191,8 +192,10 @@ def play_cam(q):
 
 
 if __name__ == '__main__':
+  playsound("./sound/start.mp3")
   q = Queue()
   t1 = threading.Thread(target=play_sound, args=(q, ))
   t2 = threading.Thread(target=play_cam, args=(q, ))
   t2.start()
   t1.start()
+  
