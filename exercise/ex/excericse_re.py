@@ -43,6 +43,8 @@ class ex_list():
         return "./sq_model.sav"
     elif self.this_time_ex == "lunge":
         return "./lunge_model.sav"
+    elif self.this_time_ex == "pushup":
+        return "./pushup_model.sav"
          
     
   # 끝과 동시에 데이터베이스 클래스를 호출해야함
@@ -84,6 +86,10 @@ class ex_list():
             playsound('./sound/lunge.mp3')
             playsound("./sound/start.mp3")
 
+        elif data == "./pushup_model.sav":
+            playsound('./sound/pushup.mp3')
+            playsound("./sound/start.mp3")
+
         elif len(data) == 1:
           if data == "g":
             playsound("./sound/pp.mp3")
@@ -102,6 +108,7 @@ class ex_list():
             
           elif data[-1] > "0":
             playsound("./sound/" + data[-1] + ".mp3" )
+    
 
   def ex_start(self):
     mp_drawing = mp.solutions.drawing_utils
@@ -161,12 +168,18 @@ class ex_list():
           Rhip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
           Rknee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
           Rankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-          
+          Relbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+          Rwrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+
+
           Lshoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
           Lhip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
           Lknee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
           Lankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
-
+          Lelbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+          Lwrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+          
+          
           Rangle_knee = self.calculate_angle(Rhip, Rknee, Rankle)
           Rknee_angle = 180-Rangle_knee
 
@@ -179,19 +192,35 @@ class ex_list():
           Langle_hip = self.calculate_angle(Lshoulder, Lhip, Lknee)
           Lhip_angle = 180-Langle_hip
 
+          Langle_elbow = self.calculate_angle(Lshoulder, Lelbow, Lwrist)
+          Lelbow_angle = 180-Langle_elbow
+
+          Rangle_elbow = self.calculate_angle(Rshoulder, Relbow, Rwrist)
+          Relbow_angle = 180-Rangle_elbow
+
         except:
           pass
 
         try:
           if time_count > 10:
             time_count = 0
-            pre = np.array([[Rshoulder[0], Rshoulder[1], Lshoulder[0], Lshoulder[1],
+            if self.this_time_ex == "squrt" or self.this_time_ex == "lunge":
+              pre = np.array([[Rshoulder[0], Rshoulder[1], Lshoulder[0], Lshoulder[1],
                               Rhip[0], Rhip[1], Lhip[0], Lhip[1], 
                               Rknee[0], Rknee[1], Lknee[0], Lknee[1], 
                               Rankle[0], Rankle[1], Lankle[0], Lankle[1], 
-                              Rknee_angle, Lknee_angle, Rhip_angle, Lhip_angle
+                              Rknee_angle, Lknee_angle, Rhip_angle, Lhip_angle]])
+
+            elif self.this_time_ex == "plank" or self.this_time_ex == "pushup":
+              pre = np.array([[Rshoulder[0], Rshoulder[1], Lshoulder[0], Lshoulder[1],
+                              Rhip[0], Rhip[1], Lhip[0], Lhip[1], 
+                              Rknee[0], Rknee[1], Lknee[0], Lknee[1], 
+                              Rankle[0], Rankle[1], Lankle[0], Lankle[1], 
+                              Rknee_angle, Lknee_angle, Rhip_angle, Lhip_angle,
+                              Relbow[0], Relbow[1], Lelbow[0], Lelbow[1],
+                              Rwrist[0], Rwrist[1], Lwrist[0], Lwrist[1],
+                              Relbow_angle, Lelbow_angle
                               ]])
-            
 
             #print(np.argmax(loaded_model.predict_proba(pre).tolist()))
             if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
@@ -276,7 +305,7 @@ class DBconnect:
 
 
 if __name__ == '__main__':
-    ex_infor_list = ["squrt", "5", "lunge", "5"]
+    ex_infor_list = ["squrt", "1", "lunge", "1", "pushup", "1"]
     ex = ex_list("kim", ex_infor_list )
     ex.run()
     del ex
