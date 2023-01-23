@@ -20,26 +20,37 @@ def play_sound(q):
   while True:
     data = q.get()
     if data is None:
-      break
-    data = str(data)
-    if len(data) == 1:
-      if data == "0":
-        playsound("./pp.mp3")
-        
-      elif data[-1] > "0":
-        playsound("./sound/" + str(data) + ".mp3" )
-  
-    if len(data) == 2:
-      if data[-1] == "0":
-        if data[0] == "1":
-          playsound("./sound/10.mp3")
-        
-        elif data[0] > "1":
-          playsound("./sound/" + data[0] + ".mp3" ) 
-          playsound("./sound/10.mp3")
-         
-      elif data[-1] > "0":
-        playsound("./sound/" + data[-1] + ".mp3" )
+      pass
+
+    else: 
+      data = str(data)
+
+      if data == "1000":
+        playsound("./ready.mp3")
+      
+      elif data == "10000":
+        break
+
+      elif len(data) == 1:
+        if data == "0":
+          playsound("./pp.mp3")
+
+        elif data[-1] > "0":
+          playsound("./sound/" + str(data) + ".mp3" )
+    
+      elif len(data) == 2:
+        if data[-1] == "0":
+          if data[0] == "1":
+            playsound("./sound/10.mp3")
+          
+          elif data[0] > "1":
+            playsound("./sound/" + data[0] + ".mp3" ) 
+            playsound("./sound/10.mp3")
+          
+        elif data[-1] > "0":
+          playsound("./sound/" + data[-1] + ".mp3" )
+
+      
       
 
 
@@ -67,7 +78,7 @@ def play_cam(q):
   time_count = 0
 
   # 운동 카운트
-  ex_count = 10
+  ex_count = 0
 
   # 운동 상태
   ex_status = 0
@@ -149,7 +160,7 @@ def play_cam(q):
             if ex_status == 0:
               ex_status = 1
               status = "ready"
-              q.put(0)
+              q.put(1000)
 
             elif ex_status == 2:
               ex_status = 1
@@ -184,6 +195,7 @@ def play_cam(q):
 
       if cv2.waitKey(5) & 0xFF == 27:
         playsound("./sound/finish.mp3")
+        q.put(10000)
         break
 
   cap.release()
