@@ -45,6 +45,8 @@ class ex_list():
         return "./lunge_model.sav"
     elif self.this_time_ex == "pushup":
         return "./pushup_model.sav"
+    elif self.this_time_ex == "plank":
+        return "./plank_model.sav" 
          
     
   # 끝과 동시에 데이터베이스 클래스를 호출해야함
@@ -74,7 +76,13 @@ class ex_list():
       else: 
         if data == "ready":
             playsound("./sound/ready.mp3")
+          
+        elif data == "stop":
+            playsound("./sound/stop.mp3")
         
+        elif data == "start":
+            playsound("./sound/sijak.mp3")
+
         elif data == "exit":
             break
 
@@ -90,6 +98,12 @@ class ex_list():
             playsound('./sound/pushup.mp3')
             playsound("./sound/start.mp3")
 
+        elif data == "./plank_model.sav":
+            playsound('./sound/plank.mp3')
+            playsound("./sound/start.mp3")
+
+
+        # 스쿼트, 런지, 푸쉬업용
         elif len(data) == 1:
           if data == "g":
             playsound("./sound/pp.mp3")
@@ -108,6 +122,35 @@ class ex_list():
             
           elif data[-1] > "0":
             playsound("./sound/" + data[-1] + ".mp3" )
+
+          # 플랭크용
+        else:
+            data = data.replace("p","")
+            data = data.replace("l","")
+            data = data.replace("a","")
+            if len(data) == 2 and data[0] >= "1" and data[0] < "6":
+              playsound("./sound/" + data + "c.mp3" )
+
+            elif len(data) == 2 and data[0] >= "6" and data[0] <= "9":
+              su = int(data)
+              cho = su % 60
+
+              if cho == 0:
+                playsound("./sound/1m.mp3")
+              
+              else:
+                playsound("./sound/1m.mp3")
+                playsound("./sound/" + str(cho) + "c.mp3" )
+            
+            elif len(data) == 3:
+              su = int(data)
+              min = su / 60
+              cho = su % 60
+
+              playsound("./sound/" +str(int(min))+ "m.mp3")
+              if cho != 0:
+                playsound("./sound/" + str(cho) + "c.mp3" )
+
     
 
   def ex_start(self):
@@ -122,7 +165,16 @@ class ex_list():
     ex_status = 0
     status = "start"
 
+    #플랭크용
+    num = 0
+    ex_time = 0
+
+    end = 0
+  
     self.ex_this_time()
+    if self.ex_sunseo == len(self.today_ex_list):
+      end = 1
+
     loaded_model = pickle.load(open(self.return_ex_model(), 'rb')) 
     self.q.put(self.return_ex_model())
     
@@ -147,11 +199,19 @@ class ex_list():
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        if str(ex_count) == self.this_time_ex_count:
+
+        if str(ex_count) == self.this_time_ex_count or str(num) == self.this_time_ex_count:
             ex_count = 0
+            num == 0
             self.ex_this_time()
             loaded_model = pickle.load(open(self.return_ex_model(), 'rb'))
             self.q.put(self.return_ex_model())
+            ex_status = 0
+            status = "start"  
+
+            if self.ex_sunseo == len(self.today_ex_list):
+              end = 1
+
 
         mp_drawing.draw_landmarks(
             image,
@@ -223,26 +283,58 @@ class ex_list():
                               ]])
 
             #print(np.argmax(loaded_model.predict_proba(pre).tolist()))
-            if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
-              if ex_status == 0:
-                ex_status = 1
-                status = "ready"
-                self.q.put("ready")
+            if self.this_time_ex != "plank":
+              if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
+                if ex_status == 0:
+                  ex_status = 1
+                  status = "ready"
+                  self.q.put("ready")
 
-              elif ex_status == 2:
-                ex_status = 1
-                status = "ready"
-                ex_count += 1
-                self.q.put(str(ex_count))
+                elif ex_status == 2:
+                  ex_status = 1
+                  status = "ready"
+                  ex_count += 1
+                  self.q.put(str(ex_count))
 
-            elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
-              if ex_status == 1:
-                ex_status = 2
-                status = "good"
-                self.q.put("g")
+              elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
+                if ex_status == 1:
+                  ex_status = 2
+                  status = "good"
+                  self.q.put("g")
+
+            else:
+              if 0 == np.argmax(loaded_model.predict_proba(pre).tolist()):
+                if ex_status == 0:
+                  ex_status = 1
+                  status = "ready"
+                  self.q.put("ready")
+
+                elif ex_status == 2:
+                  ex_status = 0
+                  status = "stop"
+                  self.q.put("stop")
+
+              elif 1 == np.argmax(loaded_model.predict_proba(pre).tolist()):
+                if ex_status == 1:
+                  ex_status = 2
+                  status = "start"
+                  self.q.put("start")
+                  num += 1
+
+              
               
         except:
           print("model")
+        
+        if self.this_time_ex == "plank":
+          if ex_status == 2:
+                  ex_time += 1
+                  if ex_time == 25:
+                    num += 1
+                    if num % 10 == 0 and num != 0:
+                      self.q.put("pla" + str(num))
+
+                    ex_time = 0
             
           
         cv2.flip(image, 1)
@@ -252,9 +344,15 @@ class ex_list():
             color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
 
 
-        cv2.putText(image, str(ex_count), org=(30, 60), 
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
-            color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+        if self.this_time_ex != "plank":
+          cv2.putText(image, str(ex_count), org=(30, 60), 
+              fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
+              color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+          
+        elif self.this_time_ex == "plank":
+          cv2.putText(image, str(num), org=(30, 60), 
+              fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
+              color=(0,0,255),thickness=3, lineType=cv2.LINE_AA)
 
         cv2.putText(image, status, org=(30, 30), 
             fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, 
@@ -265,7 +363,7 @@ class ex_list():
         time_count += 1
 
 
-        if cv2.waitKey(5) & 0xFF == 27:
+        if (cv2.waitKey(5) & 0xFF == 27) or (end == 1 and (str(num) == self.this_time_ex_count or str(ex_count) == self.this_time_ex_count)):
           playsound("./sound/finish.mp3")
           self.q.put("exit")
           break
@@ -286,6 +384,10 @@ class ex_list():
     print("4")
     t2.start()
     print("5")
+
+    t2.join()
+
+
     t1.join()
     t2.join()
             
@@ -305,7 +407,8 @@ class DBconnect:
 
 
 if __name__ == '__main__':
-    ex_infor_list = ["squrt", "1", "lunge", "1", "pushup", "1"]
+    #ex_infor_list = ["squrt", "5", "plank", "20", "lunge", "5", "pushup", "5"]
+    ex_infor_list = ["squrt", "2"]
     ex = ex_list("kim", ex_infor_list )
     ex.run()
     del ex
