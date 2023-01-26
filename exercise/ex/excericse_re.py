@@ -343,7 +343,7 @@ class ex_list():
         if self.this_time_ex == "plank":
           if ex_status == 2:
                   ex_time += 1
-                  if ex_time == 25:
+                  if ex_time == 35:
                     num += 1
                     if num % 10 == 0 and num != 0:
                       self.q.put("pla" + str(num))
@@ -390,7 +390,7 @@ class ex_list():
       self.complete_ex_list[self.complete_num] = ex_count
 
     else:
-      self.complete_ex_list[self.complete_num] = ex_time
+      self.complete_ex_list[self.complete_num] = num
 
  
 
@@ -737,7 +737,5 @@ if __name__ == '__main__':
 
     del ex
     del db
-
-  #용민 : 스쿼트 스펠링틀림
 
   
