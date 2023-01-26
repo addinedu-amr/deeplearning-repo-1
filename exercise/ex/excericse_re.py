@@ -718,10 +718,10 @@ if __name__ == '__main__':
       answer2 = audio_recognition.check_answer()
       if answer2 == "네":
         playsound('./sound/down.mp3')
-        db.today_ex_list[1]  = int(int(db.today_ex_list[1]) * 0.7)
-        db.today_ex_list[3]  = int(int(db.today_ex_list[3]) * 0.7)
-        db.today_ex_list[5]  = int(int(db.today_ex_list[5]) * 0.7)
-        db.today_ex_list[7]  = int(int(db.today_ex_list[7]) * 0.7)
+        db.today_ex_list[1]  = str(int(int(db.today_ex_list[1]) * 0.7))
+        db.today_ex_list[3]  = str(int(int(db.today_ex_list[3]) * 0.7))
+        db.today_ex_list[5]  = str(int(int(db.today_ex_list[5]) * 0.7))
+        db.today_ex_list[7]  = str(int(int(db.today_ex_list[7]) * 0.7))
         
       elif answer2 == "아니요":
         playsound("./sound/good.mp3")
