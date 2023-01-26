@@ -11,11 +11,16 @@ from playsound import playsound
 import threading
 import time
 from queue import Queue
+import mysql.connector
 
 #운동 클래스 정의
 class ex_list():  
   #운동 종류랑 운동 숫자를 카운트
   today_ex_list = []
+  complete_ex_list = ["squat", "0", "pushup", "0", "lunge", "0", "plank", "0"]
+  complete_num = 1
+
+
   ex_name = "운동명"
   user_name = "유저이름"
 
@@ -39,7 +44,7 @@ class ex_list():
     self.ex_sunseo += 2
 
   def return_ex_model(self):
-    if self.this_time_ex == "squrt":
+    if self.this_time_ex == "squat":
         return "./sq_model.sav"
     elif self.this_time_ex == "lunge":
         return "./lunge_model.sav"
@@ -203,6 +208,9 @@ class ex_list():
         if str(ex_count) == self.this_time_ex_count or str(num) == self.this_time_ex_count:
             ex_count = 0
             num == 0
+            self.complete_ex_list[self.complete_num] = self.this_time_ex_count
+            self.complete_num += 2
+
             self.ex_this_time()
             loaded_model = pickle.load(open(self.return_ex_model(), 'rb'))
             self.q.put(self.return_ex_model())
@@ -264,7 +272,7 @@ class ex_list():
         try:
           if time_count > 10:
             time_count = 0
-            if self.this_time_ex == "squrt" or self.this_time_ex == "lunge":
+            if self.this_time_ex == "squat" or self.this_time_ex == "lunge":
               pre = np.array([[Rshoulder[0], Rshoulder[1], Lshoulder[0], Lshoulder[1],
                               Rhip[0], Rhip[1], Lhip[0], Lhip[1], 
                               Rknee[0], Rknee[1], Lknee[0], Lknee[1], 
@@ -324,7 +332,8 @@ class ex_list():
               
               
         except:
-          print("model")
+          pass
+          #print("model")
         
         if self.this_time_ex == "plank":
           if ex_status == 2:
@@ -371,19 +380,22 @@ class ex_list():
     cv2.destroyAllWindows()
     cap.release()
     self.q.put(None)  
+
+    if self.this_time_ex != "plank":
+      self.complete_ex_list[self.complete_num] = ex_count
+
+    else:
+      self.complete_ex_list[self.complete_num] = ex_time
+
  
 
 
   def run(self):
-    print("1")
     t1 = threading.Thread(target=self.ex_start)
-    print("2")
     t2 = threading.Thread(target=self.play_sound)
-    print("3")
     t1.start()
-    print("4")
     t2.start()
-    print("5")
+
 
     t2.join()
 
@@ -393,22 +405,187 @@ class ex_list():
             
 
 
-class DBconnect:
-  user_name = "유저이름"
-  today_ex_count ="오늘의 할당량"
 
-  # DB에 접속해 유저이름과 그동안의 운동기록을 가져온다.
-  def __init__(self):
-    pass
 
-  # 넘겨받은 정보를 바탕으로 오늘의 운동량을 생성한다.
-  def today_ex(self):
-    pass
+class DB_access():
+    username = ""
+    password = ""
+    weight = 0
+    destination = 0
+    
 
+    login_success = 0
+    local = None
+    history_df = None
+    today_ex_list = []
+
+    mul = 0
+    
+    def __init__(self):
+
+        try:
+            self.local = mysql.connector.connect(
+                host = "localhost",
+                port = 3306,
+                user = "root",
+                password = "1234",
+                database = "ex"
+                )
+            
+            self.cursor = self.local.cursor(buffered=True)
+        except:
+            print("데이터 베이스 읽기 오류입니다.")
+        
+    def login(self):
+        username = input("ID >>")
+        password = input("PW >>")
+        try:
+            self.username = username
+            self.password = password
+
+            sql = "select * from userinfo where user = '" + self.username + "';"
+                    #sql = "select * from userinfo;"
+            self.cursor.execute(sql)
+
+            result = self.cursor.fetchall()
+            string = str(result).split(",")[1]
+            string = string.replace("'", "")
+            string = string.replace(" ", "")
+
+            if string == password:
+                print("로그인 성공")
+                self.login_success = 1
+
+            else:
+                print("비밀번호 오류")
+      
+        except:
+            print("그런 사람 없어요.")
+        
+    def register(self):
+        #create table userinfo( user varchar(50), password varchar(50), weight int, destination int );
+        self.username = input("ID >>")
+        self.password = input("PW >>")
+        self.weight = input("weight >>")
+        self.destination = input("destiny >>")
+        
+        sql = "select * from userinfo where user = '" + self.username + "';"
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+        
+        try:
+          if str(result) == "[]":
+            time.sleep(1)
+            sql = "insert into userinfo values('" + self.username + "', '"  + self.password + "', " + self.weight + ", " + self.destination + ");"
+            self.cursor.execute(sql)
+            self.local.commit()
+            print("등록완료")
+            sql = "insert into history values('" + self.username + "', 0, '" + self.return_today() + "', 0, '" + self.weight + "', '" + self.destination + "', 0, 0, 0, 0, 0);"
+            time.sleep(1)
+            self.cursor.execute(sql)
+            self.local.commit()
+            print("데이터 등록 완료")
+          
+          else:
+              print("이미 존재하는 유저입니다.")
+    
+        except:
+          print("알수없는 이유로 실패했습니다.")
+            
+    def see_ex_history(self):
+        if self.login_success == 0:
+            print("로그인을 먼저 진행하세요")
+            return
+        else:
+            sql = "select * from history where user = '" + self.username + "';"
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+            self.history_df = pd.DataFrame(result)
+            self.history_df.columns = ['user', 'reward', 'day', 'cal', 'weight', 'destination', 'squrt', 'lunge', 'pushup', 'plank', "exday"]
+
+    def insert_data(self, complete_ex_list):
+
+      if complete_ex_list == self.today_ex_list:
+        self.mul += 1
+
+      cal = float(complete_ex_list[1]) * 0.5 + float(complete_ex_list[3]) * 0.5  + float(complete_ex_list[5]) * 0.5 + float(complete_ex_list[7]) * 0.33
+      reward = int(cal)
+
+      sql = "insert into history values('" + self.username + "', " + str(reward) + " , '" + self.return_today() + "', " + str(cal) + " , " + str(self.weight) + ", " + str(self.destination) + ", " + str(complete_ex_list[1]) + " , "  + str(complete_ex_list[3]) + " , " +  str(complete_ex_list[5]) + " , " + str(complete_ex_list[7]) + " , " + str(self.mul) + ");"
+      self.cursor.execute(sql)
+      self.local.commit()
+      print("데이터 등록 완료")
+        
+    def return_today(self):
+      year = dt.datetime.now().year
+      month = dt.datetime.now().month
+      day = dt.datetime.now().day
+
+      return str(year) + "-"  + str(month) + "-" + str(day)
+      
+    def return_today_ex(self):
+      self.weight = self.history_df["weight"][len(self.history_df)-1]
+      self.destination = self.history_df["destination"][len(self.history_df)-1]
+
+
+      if self.history_df["exday"][len(self.history_df)-1] % 2 == 0:
+        self.mul = int(self.history_df["exday"][len(self.history_df)-1])
+        if self.mul > 6:
+          self.mul = 6
+
+        self.today_ex_list.append("squat")
+        self.today_ex_list.append(str(30 + self.mul*5))
+        
+        self.today_ex_list.append("pushup")
+        self.today_ex_list.append(str(20 + self.mul*5))
+
+        self.today_ex_list.append("lunge")
+        self.today_ex_list.append(str(30 + self.mul*5))
+        
+        self.today_ex_list.append("plank")
+        self.today_ex_list.append(str(60 + self.mul*5))
+        
+
+        
+        
+    def run(self):
+        while(True):
+            sel = input("Login > 1 / regist > 2 / exit > 3 \n >>>>>")
+            if sel == "1":
+                self.login()
+            elif sel == "2":
+                self.register()
+            elif sel == "3":
+                break
+                
+            if self.login_success == 1:
+                time.sleep(1)
+                print("로그인 성공 메인메뉴로 이동")
+                break
+        self.see_ex_history()
+        print("운동 정보를 가져오고 있습니다.")
+        time.sleep(1)
+
+        self.return_today_ex()
+        print("오늘의 운동량을 가져옵니다.")
+        time.sleep(1)
 
 if __name__ == '__main__':
-    #ex_infor_list = ["squrt", "5", "plank", "20", "lunge", "5", "pushup", "5"]
-    ex_infor_list = ["squrt", "2"]
-    ex = ex_list("kim", ex_infor_list )
+    db = DB_access()
+    db.run()
+    time.sleep(1)
+    print("오늘의 운동량 " + str(db.today_ex_list))
+
+    time.sleep(1)
+    print("곧 운동이 시작됩니다.")
+
+    ex = ex_list(db.username, db.today_ex_list )
     ex.run()
+    db.insert_data(ex.complete_ex_list)
+
     del ex
+    del db
+
+  #용민 : 스쿼트 스펠링틀림
+
+  
