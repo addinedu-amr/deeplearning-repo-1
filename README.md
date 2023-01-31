@@ -8,32 +8,31 @@
 
 
 ## 🏃팀원 및 역할 분배🏃
-#### ◾ 최선민 (총괄)
-- 프로젝트 기획
-- 운동의 정확한 자세 정의 및 측정 
+#### ◾ 최선민 (Project Management Office)
+- 프로젝트 기획 및 설계
+- 데이터 수집(운동의 정확한 자세 정의 및 측정) 
 - media pipe pose estimation 알고리즘 설계
-- 데이터 수집(모션 캡처, 운동의 정확한 자세 측정)
 
-#### ◾ 김두엽
+
+#### ◾ 김두엽(Project manager)
 - 프로젝트 설계 (시간분배, 일정)
 - 프로젝트 기록 및 설계도 작성
-- media pipe 
-- 데이터 수집(모션 캡처 및 음성녹음)
+- media pipe pose estimation 알고리즘 설계
 
-#### ◾ 박민제
+#### ◾ 박민제(system architecture engineer)
 - 프로젝트 메니징(설계, 구체화 방향성 제시)
 - 팀원 어드바이스
 - media pipe
 - 데이터 수집(모션 캡처 및 음성녹음)
 
-#### ◾ 박인
+#### ◾ 박인 (NLT Project Leader)
 - 자연어처리 (양방향 소통)
 - nltk
 - 음성 API (마이크로 소프트, 구글) 를 활용한 인식
 - 데이터 수집(모션 캡처 및 음성녹음)
 
 
-#### ◾ 손훈민
+#### ◾ 손훈민 (NLT, DB Project Leader / Data Analyst)
 - 자연어처리 (양방향 소통
 - nltk
 - 음성 API (마이크로 소프트, 구글) 를 활용한 인식
