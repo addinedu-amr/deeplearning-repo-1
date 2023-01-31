@@ -18,7 +18,8 @@ https://www.youtube.com/watch?v=VtHZZ8RGzP0&t=18s
 </br>
 발표자료 폴더 참고
 
-
+</br>
+</br>
 
 
 ## 🏃팀원 및 역할 분배🏃
@@ -53,43 +54,65 @@ https://www.youtube.com/watch?v=VtHZZ8RGzP0&t=18s
 - 데이터 수집(모션 캡처 및 음성녹음)
 - __목소리의 주인공__
 
+</br>
+</br>
 
 ## 🏃설계🏃
-### ◾ 앱 UI 설계
+### 🔨 앱 UI 설계 🔨
 ![딥러닝 프로젝트 UI 설계 drawio (2)](https://user-images.githubusercontent.com/110883172/212559353-b19d15be-90f5-467c-a2ae-cbf922123681.png)
 
 
 
 
-### ◾ 엑티브 다이어그램 설계
+### 🔨 엑티브 다이어그램 설계 🔨
 ![딥러닝 엑티브 다이어그램 drawio (1)](https://user-images.githubusercontent.com/110883172/212559636-e462aa40-0f95-4b29-950d-64b6cfb9d7b6.png)
 
 
 
+### 🔨 APP 설계 🔨
+- 메인화면
+
+![image](https://user-images.githubusercontent.com/110883172/213055508-68308d52-acf1-4ed7-b485-2616b79bcb7c.png)
+
+- 회원가입
+
+![image](https://user-images.githubusercontent.com/110883172/213055544-844fd3b2-0cd5-4ebb-af68-91f2b15e9d69.png)
+
+- 운동기록
+
+![image](https://user-images.githubusercontent.com/110883172/213055607-efb77b1e-9908-435b-998f-14781bc1ed89.png)
+
+
+</br>
+</br>
+
+
 
 ## 🏃구현🏃
-### ◾ pose estimation
+###  ⚾ pose estimation ⚾
 <center><img src="https://user-images.githubusercontent.com/110883172/213050490-fe6abc68-d3f8-423b-a4b7-73957f0c30f3.png" width="400" height="400"/></center>
 - mediapipe를 사용하여, 각 관절의 좌표값을 읽어들임
 
-#### 구현되어 있는 운동
+####  구현되어 있는 운동 
 
 - 스쿼트
 - 팔굽혀펴기
 - 런지
 - 플랭크
 
-#### 데이터 출처
+#### 데이터 출처 
 <center><img src="https://user-images.githubusercontent.com/110883172/213050058-c4b89369-5a06-4d10-b916-99b8ea3b83dd.png" width="400" height="700"/></center>
 - 정방향 모션 캡처 (준비자세, 운동자세, 틀린자세)
 
 
-#### 모델 구현
+####  모델 구현  
 - pose estimation (DL)
 - Descision Tree (ML)
 
+</br>
+</br>
 
-### : ◾ 자연어처리
+### : 🏀 자연어처리 🏀
 #### 머신러닝을 통한 네 VS 아니요 음성인식 구현
 
 ![image](https://user-images.githubusercontent.com/110883172/215765148-77abb25a-a181-49cf-990d-76d3c6ae1860.png)
@@ -109,21 +132,11 @@ https://www.youtube.com/watch?v=VtHZZ8RGzP0&t=18s
 
 ![image](https://user-images.githubusercontent.com/110883172/215765383-fe1ff203-aad5-492a-9e86-45c28507dd35.png)
 
-
 </br>
 </br>
-</br>
 
-### ◾ APP 설계
-- 메인화면
+### 📀 데이터베이스 📀
 
-![image](https://user-images.githubusercontent.com/110883172/213055508-68308d52-acf1-4ed7-b485-2616b79bcb7c.png)
+![image](https://user-images.githubusercontent.com/110883172/215766280-8dd97f06-ac6d-489a-ab37-decf3d639277.png)
 
-- 회원가입
-
-![image](https://user-images.githubusercontent.com/110883172/213055544-844fd3b2-0cd5-4ebb-af68-91f2b15e9d69.png)
-
-- 운동기록
-
-![image](https://user-images.githubusercontent.com/110883172/213055607-efb77b1e-9908-435b-998f-14781bc1ed89.png)
 
