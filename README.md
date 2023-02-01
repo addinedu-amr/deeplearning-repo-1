@@ -41,17 +41,13 @@ __발표자료__
 - media pipe
 - 데이터 수집(모션 캡처 및 음성녹음)
 
-#### ◾ 박인 (NLT Project Leader)
+#### ◾ 박인 (NLP Project Leader)
 - 자연어처리 (양방향 소통)
-- nltk
-- 음성 API (마이크로 소프트, 구글) 를 활용한 인식
 - 데이터 수집(모션 캡처 및 음성녹음)
 
 
-#### ◾ 손훈민 (NLT, DB Project Leader / Data Analyst)
-- 자연어처리 (양방향 소통
-- nltk
-- 음성 API (마이크로 소프트, 구글) 를 활용한 인식
+#### ◾ 손훈민 (NLP, DB Project Leader / Data Analyst)
+- 자연어처리 (양방향 소통)
 - 데이터 수집(모션 캡처 및 음성녹음)
 - __목소리의 주인공__
 
@@ -120,12 +116,12 @@ __발표자료__
 - 아날로그 신호인 음성신호를 분석하기 위해서 디지털 신호로 변환해주어야 한다.
 
 ![image](https://user-images.githubusercontent.com/110883172/215765212-cfddedf6-eea5-4972-a31e-4f2419d04206.png)
-- 음성신호는 타임도메인의 연속적인 데이터.  타임도메인에서 주파수 데이터를 얻는 것이 FFT. 음성은 다양한 음성이 합쳐져서 시간 영역 전체를 FFT를 하면 원하는 결과를 얻지 못 할 수 있다.  그래서 시간 영역을 짧게 쪼개어서 각 영역마다 FFT를 수행하는 개념인 STFT하면 타임도메인의 스펙트럼이 나온다,
+- 음성신호는 time domain의 연속적인 데이터.  time domain에서 주파수 데이터를 얻는 것이 FFT. 음성은 다양한 음성이 합쳐져서 시간 영역 전체를 FFT를 하면 원하는 결과를 얻지 못 할 수 있다.  그래서 시간 영역을 짧게 쪼개어서 각 영역마다 FFT를 수행하는 개념인 STFT(Short-Time Fourier Transform)하면 time domain의 spectogram이 나온다, https://ko.wikipedia.org/wiki/%ED%91%B8%EB%A6%AC%EC%97%90_%EB%B3%80%ED%99%98
 
 ![image](https://user-images.githubusercontent.com/110883172/215765240-3f171e71-ba05-411e-b7dd-7f013d385435.png)
-- 사람은 저주파 대역에 더 민감하다. 그래서 스펙트럼에 mel scale을 기반한 filter bank인 mel filter bank를 적용시켜서 mel spectrum을 얻을 수 있다. 이를 다시  x축을 time domain으로, megnitude 를 dB로 변환해서 그려주면 mel spectrogram이 나온다.
+- 사람은 저주파 대역에 더 민감하다. 그래서 스펙트럼에 Mel scale을 기반한 filter bank인 Mel filter bank를 적용시켜서 Mel spectrum을 얻을 수 있다. 이를 다시 STFT하여 x축을 time domain으로, magnitude 를 dB로 변환해서 그려주면 mel spectrogram이 나온다.
 
-- mel spectrum에 cepstral 분석 방식을 거치면 학습에 사용하기 좋은 mfcc가 나온다 *MFCC는 오디오 신호에서 추출할 수 있는 feature로, 소리의 고유한 특징을 나타내는 수치
+- Mel spectrogram에 cepstral 분석 방식을 거치면 MFCC가 나온다 *MFCC는 오디오 신호에서 추출할 수 있는 feature로, 소리의 고유한 특징을 나타내는 수치
 
 #### 결과물
 ![image](https://user-images.githubusercontent.com/110883172/215765272-6cf185e5-580c-4b3c-b330-fe92705585e5.png)
